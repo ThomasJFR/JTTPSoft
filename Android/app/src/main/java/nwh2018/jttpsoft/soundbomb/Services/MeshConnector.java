@@ -197,8 +197,13 @@ public class MeshConnector extends Service implements MeshStateListener {
         buffer[0] = (byte) 0x002; // pause
         byte[] intermedianTimestamp = ByteIntConvertor.longToBytes(timestamp);
         System.arraycopy(intermedianTimestamp,0,buffer,1,8);
-        for(MeshID receiver: this.users) {
-            mm.sendDataReliable(receiver, MESH_PORT, buffer);
+        try {
+            for (MeshID receiver : this.users) {
+                mm.sendDataReliable(receiver, MESH_PORT, buffer);
+            }
+        }
+        catch (RuntimeException re){
+            re.printStackTrace();
         }
     }
 
