@@ -7,8 +7,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.widget.Toast;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import nwh2018.jttpsoft.soundbomb.Activities.ReceiverActivity;
 
@@ -18,7 +18,7 @@ import nwh2018.jttpsoft.soundbomb.Activities.ReceiverActivity;
 
 public class LocalReceiver extends BroadcastReceiver{
 
-    private static List<Activity> activityList = new ArrayList<>();
+    private static Map<Integer, Activity> activityList = new HashMap<>();
     public static final int SOURCE_INDEX = 0;
     public static final int RECEIVER_INDEX = 1;
 
@@ -74,6 +74,6 @@ public class LocalReceiver extends BroadcastReceiver{
     }
 
     public static void subscribeToUpdates(int index, Activity activity){
-        activityList.add(index, activity);
+        activityList.put(index, activity);
     }
 }
