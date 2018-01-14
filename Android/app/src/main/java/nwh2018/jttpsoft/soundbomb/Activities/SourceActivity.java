@@ -221,11 +221,12 @@ public class SourceActivity extends AppCompatActivity implements Button.OnClickL
                     else{
                         meshConnector.setData(Utilities.getFileAsByteArray(currentPath));
                         //meshConnector.sendFile();
-                        long timestamp = TimeManager.getCurrentTimeStamp() + 3; // one second delay for file transfer
+                        long timestamp = TimeManager.getCurrentTimeStamp() + 1; // one second delay for file transfer
+                        Log.e(TAG, String.valueOf(timestamp));
                         meshConnector.sendPlay(timestamp);
 
                         btn_play.setImageResource(R.drawable.pause_button);
-                        //while(TimeManager.getCurrentTimeStamp()<timestamp); // sleep until timestamp triggered.
+                        while(TimeManager.getCurrentTimeStamp()<timestamp); // sleep until timestamp triggered.
                         mediaPlayer.start();
                     }
                 }

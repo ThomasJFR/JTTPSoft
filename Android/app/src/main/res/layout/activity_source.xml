@@ -39,11 +39,12 @@
 
     <ImageButton
         android:id="@+id/btn_play"
-        android:layout_gravity="center_horizontal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
         android:layout_weight="0.5"
-        android:src="@drawable/play_button"/>
+        android:background="@null"
+        android:src="@drawable/play_button" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
