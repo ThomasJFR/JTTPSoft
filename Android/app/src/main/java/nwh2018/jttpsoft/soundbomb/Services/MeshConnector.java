@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
+import android.widget.TextView;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -157,12 +158,33 @@ public class MeshConnector extends Service implements MeshStateListener {
         }
     }
 
+    public String getPeerStatus(){
+        String display = new String();
+
+        //Self UUID
+        display = display + "Self:\n" + mm.getUuid().toString() + "\n";
+
+        //Master
+        display = display + "Master:\n" +
+                ((null==this.getMaster())?"":this.getMaster().toString()) +"\n";
+
+        //Peers
+        display = display + "Peers:\n";
+        for (MeshID peer: this.users)
+            display = display + peer.toString() + "\n";
+
+        return display;
+    }
+
 
     private void handlePeerChanged(MeshManager.RightMeshEvent e){
         MeshManager.PeerChangedEvent event = (MeshManager.PeerChangedEvent) e;
-        if(event.state != REMOVED && !users.contains(event.peerUuid))
+        if(event.state != REMOVED && !users.contains(event.peerUuid)){
+            Log.i(LOG_TAG,"User "+ event.peerUuid + " joined.");
             users.add(event.peerUuid);
+        }
         else if (event.state == REMOVED){
+            Log.i(LOG_TAG,"User "+ event.peerUuid + " quited.");
             users.remove(event.peerUuid);
             if(event.peerUuid.equals(MeshConnector.master)){
                 Log.e(LOG_TAG,"Master quit!");

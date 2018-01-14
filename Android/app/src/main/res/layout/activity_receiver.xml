@@ -6,4 +6,9 @@
     android:layout_height="match_parent"
     tools:context="nwh2018.jttpsoft.soundbomb.Activities.ReceiverActivity">
 
+    <TextView
+        android:id="@+id/peerStatus"
+        android:layout_width="0dp"
+        android:layout_height="495dp"
+        android:layout_weight="1" />
 </LinearLayout>

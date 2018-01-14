@@ -7,6 +7,7 @@ import android.content.ServiceConnection;
 import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.widget.TextView;
 
 import nwh2018.jttpsoft.soundbomb.R;
 import nwh2018.jttpsoft.soundbomb.Services.MeshConnector;
@@ -44,11 +45,22 @@ public class ReceiverActivity extends AppCompatActivity {
     @Override
     public void onStart(){
         super.onStart();
+        TextView peerStatusView = (TextView) findViewById(R.id.peerStatus);
+        String peerStatus = meshConnector.getPeerStatus();
+        peerStatusView.setText(peerStatus);
     }
 
     @Override
     public void onBackPressed(){
         super.onBackPressed();
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        TextView peerStatusView = (TextView) findViewById(R.id.peerStatus);
+        String peerStatus = meshConnector.getPeerStatus();
+        peerStatusView.setText(peerStatus);
     }
 
     @Override
