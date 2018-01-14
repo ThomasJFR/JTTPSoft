@@ -56,9 +56,7 @@ public class ReceiverActivity extends AppCompatActivity {
     @Override
     public void onStart(){
         super.onStart();
-        TextView peerStatusView = (TextView) findViewById(R.id.peerStatus);
-        String peerStatus = meshConnector.getPeerStatus();
-        peerStatusView.setText(peerStatus);
+        this.updatePeerStatus();
     }
 
     @Override
@@ -70,15 +68,19 @@ public class ReceiverActivity extends AppCompatActivity {
     @Override
     public void onResume(){
         super.onResume();
-        TextView peerStatusView = (TextView) findViewById(R.id.peerStatus);
-        String peerStatus = meshConnector.getPeerStatus();
-        peerStatusView.setText(peerStatus);
+        this.updatePeerStatus();
     }
 
     @Override
     public void onDestroy(){
         unbindService(meshServiceConnection);
         super.onDestroy();
+    }
+
+    private void updatePeerStatus(){
+        TextView peerStatusView = (TextView) findViewById(R.id.peerStatus);
+        String peerStatus = meshConnector.getPeerStatus();
+        peerStatusView.setText(peerStatus);
     }
 
     public void playTrack(){
