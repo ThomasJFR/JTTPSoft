@@ -24,6 +24,7 @@ import android.widget.Toast;
 import java.io.File;
 
 import io.left.rightmesh.util.RightMeshException;
+import nwh2018.jttpsoft.soundbomb.BroadcastReceivers.LocalReceiver;
 import nwh2018.jttpsoft.soundbomb.R;
 import nwh2018.jttpsoft.soundbomb.Services.MeshConnector;
 import nwh2018.jttpsoft.soundbomb.Utilities.Utilities;
@@ -67,6 +68,8 @@ public class SourceActivity extends AppCompatActivity implements Button.OnClickL
         meshServiceIntent = new Intent(this, MeshConnector.class);
         bindService(meshServiceIntent, meshServiceConnection, Context.BIND_AUTO_CREATE);
         startService(meshServiceIntent);
+
+        LocalReceiver.subscribeToUpdates(LocalReceiver.SOURCE_INDEX, this);
 
         //--REGISTER UI ELEMENTS--
         tv_currentSong = (TextView)findViewById(R.id.tv_currentSong);

@@ -1,16 +1,26 @@
 package nwh2018.jttpsoft.soundbomb.BroadcastReceivers;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import nwh2018.jttpsoft.soundbomb.Activities.ReceiverActivity;
+
 /**
  * Created by Thomas on 2018-01-13.
  */
 
 public class LocalReceiver extends BroadcastReceiver{
+
+    private static List<Activity> activityList = new ArrayList<>();
+    public static final int SOURCE_INDEX = 0;
+    public static final int RECEIVER_INDEX = 1;
 
     private static final String DATA_RECEIVED_MASTER_UPDATE = "jttpsoft.soundbomb.DATA_RECEIVED_MASTER_UPDATE";
     private static final String MASTER_STATE = "jttpsoft.soundbomb.MASTER_STATE";
@@ -37,6 +47,9 @@ public class LocalReceiver extends BroadcastReceiver{
             case DATA_RECEIVED_FILE_DETAILS:
                 break;
             case DATA_RECEIVED_TRACK_STATE:
+                if(intent.getIntExtra(DATA_RECEIVED_TRACK, -1) != -1){
+                    ((ReceiverActivity)activityList.get(RECEIVER_INDEX)).playTrack();
+                }
                 if(intent.getIntExtra(BROADCAST_RECEIVED_PLAY, -1) != -1)
                     Toast.makeText(context, "Received a play command", Toast.LENGTH_SHORT).show();
                 if(intent.getIntExtra(BROADCAST_RECEIVED_PAUSE, -1) != -1)
@@ -58,5 +71,9 @@ public class LocalReceiver extends BroadcastReceiver{
         intentFilter.addAction(BROADCAST_RECEIVED_PAUSE);
 
         return intentFilter;
+    }
+
+    public static void subscribeToUpdates(int index, Activity activity){
+        activityList.add(index, activity);
     }
 }
