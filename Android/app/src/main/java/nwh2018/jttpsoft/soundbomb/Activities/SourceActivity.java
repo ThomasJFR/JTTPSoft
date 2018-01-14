@@ -225,7 +225,7 @@ public class SourceActivity extends AppCompatActivity implements Button.OnClickL
                         meshConnector.sendPlay(timestamp);
 
                         btn_play.setImageResource(R.drawable.pause_button);
-                        while(TimeManager.getCurrentTimeStamp()<timestamp); // sleep until timestamp triggered.
+                        //while(TimeManager.getCurrentTimeStamp()<timestamp); // sleep until timestamp triggered.
                         mediaPlayer.start();
                     }
                 }

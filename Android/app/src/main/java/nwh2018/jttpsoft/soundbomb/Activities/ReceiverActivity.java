@@ -102,7 +102,7 @@ public class ReceiverActivity extends AppCompatActivity {
             mediaPlayer.setLooping(true);
         }
          // one second delay for file transfer
-        while(TimeManager.getCurrentTimeStamp()<timestamp); // sleep until timestamp triggered.
+        //while(TimeManager.getCurrentTimeStamp()<timestamp); // sleep until timestamp triggered.
         mediaPlayer.start();
     }
 
