@@ -25,6 +25,7 @@ import java.io.File;
 
 import io.left.rightmesh.util.RightMeshException;
 import nwh2018.jttpsoft.soundbomb.BroadcastReceivers.LocalReceiver;
+import nwh2018.jttpsoft.soundbomb.HelperTools.TimeManager;
 import nwh2018.jttpsoft.soundbomb.R;
 import nwh2018.jttpsoft.soundbomb.Services.MeshConnector;
 import nwh2018.jttpsoft.soundbomb.Utilities.Utilities;
@@ -208,12 +209,15 @@ public class SourceActivity extends AppCompatActivity implements Button.OnClickL
                         mediaPlayer.pause();
                     }
                     else{
+                        meshConnector.sendPause(0);
                         meshConnector.setData(Utilities.getFileAsByteArray(currentPath));
                         meshConnector.sendPause(0); //FIXME Temporary until fix is found =D
                         meshConnector.sendFile();
-                        meshConnector.sendPlay(0);
+                        long timestamp = TimeManager.getCurrentTimeStamp() + 1; // one second delay for file transfer
+                        meshConnector.sendPlay(timestamp);
 
                         btn_play.setImageResource(R.drawable.pause_button);
+                        while(TimeManager.getCurrentTimeStamp()<timestamp); // sleep until timestamp triggered.
                         mediaPlayer.start();
                     }
                 }
