@@ -180,17 +180,37 @@ public class MeshConnector extends Service implements MeshStateListener {
         MeshConnector.dataBuffer = data;
     }
 
-    public void sendPlay(long timestamp){
-        // stub
+    public void sendPlay(long timestamp) throws RightMeshException{
+        byte[] buffer = new byte[9]; // one byte for command and eight bytes for timestamp(long)
+        buffer[0] = (byte) 0x001; // play
+        byte[] intermedianTimestamp = ByteIntConvertor.longToBytes(timestamp);
+        System.arraycopy(intermedianTimestamp,0,buffer,1,8);
+        for(MeshID receiver: this.users){
+            mm.sendDataReliable(receiver,MESH_PORT,buffer);
+        }
     }
 
-    public void sendPause(long timestamp){
-        // stub
+    public void sendPause(long timestamp) throws RightMeshException{
+        byte[] buffer = new byte[9]; // one byte for command and eight bytes for timestamp(long)
+        buffer[0] = (byte) 0x002; // pause
+        byte[] intermedianTimestamp = ByteIntConvertor.longToBytes(timestamp);
+        System.arraycopy(intermedianTimestamp,0,buffer,1,8);
+        for(MeshID receiver: this.users) {
+            mm.sendDataReliable(receiver, MESH_PORT, buffer);
+        }
     }
 
-    public boolean sendFile(){
-
-        return false; // stub
+    public void sendFile() throws RightMeshException{
+        // one byte for command and eight bytes for timestamp(long)
+        // following by the data stream to send
+        byte[] buffer = new byte[9+MeshConnector.dataBuffer.length];
+        buffer[0] = (byte) 0x003; // file transfer
+        byte[] intermedianLength = ByteIntConvertor.longToBytes(MeshConnector.dataBuffer.length);
+        System.arraycopy(intermedianLength,0,buffer,1,8);
+        System.arraycopy(MeshConnector.dataBuffer,0,buffer,9,MeshConnector.dataBuffer.length);
+        for(MeshID receiver: this.users) {
+            mm.sendDataReliable(receiver, MESH_PORT, buffer);
+        }
     }
 
     public Set<MeshID> getPeers(){
