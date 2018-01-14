@@ -20,6 +20,7 @@ import io.left.rightmesh.util.RightMeshException;
 import io.reactivex.functions.Consumer;
 import nwh2018.jttpsoft.soundbomb.BroadcastReceivers.LocalReceiver;
 import nwh2018.jttpsoft.soundbomb.HelperTools.ByteIntConvertor;
+import nwh2018.jttpsoft.soundbomb.Services.MessageMemory;
 
 import static io.left.rightmesh.mesh.MeshManager.REMOVED;
 
@@ -48,6 +49,9 @@ public class MeshConnector extends Service implements MeshStateListener {
 
     // Data Buffer
     private static byte[] dataBuffer;
+
+    // Previous message
+    private MessageMemory pervMsg = MessageMemory.NONE;
 
     @Override
     public int onStartCommand(Intent intent,int flags, int startID){
@@ -182,6 +186,20 @@ public class MeshConnector extends Service implements MeshStateListener {
         if(event.state != REMOVED && !users.contains(event.peerUuid)){
             Log.i(LOG_TAG,"User "+ event.peerUuid + " joined.");
             users.add(event.peerUuid);
+            try {
+                switch (this.pervMsg) {
+                    case PLAY:
+                        this.sendPlay(0);
+                        break;
+                    case STOP:
+                        this.sendPlay(0);
+                        break;
+                    case NONE:
+                        break;
+                }
+            }catch (Exception err){
+                // Bad luck, however just give up
+            }
         }
         else if (event.state == REMOVED){
             Log.i(LOG_TAG,"User "+ event.peerUuid + " quited.");
@@ -230,6 +248,7 @@ public class MeshConnector extends Service implements MeshStateListener {
         for(MeshID receiver: this.users){
             mm.sendDataReliable(receiver,MESH_PORT,buffer);
         }
+        this.pervMsg = MessageMemory.PLAY;
     }
 
     public void sendPause(long timestamp) throws RightMeshException{
@@ -245,6 +264,7 @@ public class MeshConnector extends Service implements MeshStateListener {
         catch (RuntimeException re){
             re.printStackTrace();
         }
+        this.pervMsg = MessageMemory.STOP;
     }
 
     public void sendFile() throws RightMeshException{
@@ -280,6 +300,7 @@ public class MeshConnector extends Service implements MeshStateListener {
             return false;
         boolean result = this.sendMastership(0);
         if(result) this.setMaster(null);
+        if(result) this.pervMsg = MessageMemory.NONE;
         return result;
     }
 
