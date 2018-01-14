@@ -22,4 +22,9 @@ public class ReceiverActivity extends AppCompatActivity {
     public void onBackPressed(){
         super.onBackPressed();
     }
+
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+    }
 }

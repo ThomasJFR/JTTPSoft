@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 
 import nwh2018.jttpsoft.soundbomb.R;
 
@@ -16,6 +17,7 @@ public class TitleActivity extends AppCompatActivity implements Button.OnClickLi
 
     Button btn_mode_source;
     Button btn_mode_receiver;
+    ProgressBar spinProgressBar;
 
 
     @Override
@@ -30,6 +32,9 @@ public class TitleActivity extends AppCompatActivity implements Button.OnClickLi
         btn_mode_receiver = (Button)findViewById(R.id.button_mode_receiver);
         btn_mode_receiver.setOnClickListener(this);
         btn_mode_receiver.setOnLongClickListener(this);
+
+        spinProgressBar = (ProgressBar)findViewById(R.id.spinProgressBar);
+        spinProgressBar.setIndeterminate(true);
     }
 
     @Override
@@ -42,16 +47,22 @@ public class TitleActivity extends AppCompatActivity implements Button.OnClickLi
         view.getContext();
         switch(view.getId()){
             case R.id.button_mode_source:
+                spinProgressBar.setVisibility(ProgressBar.VISIBLE);
+
                 Intent sourceIntent = new Intent(this, SourceActivity.class);
                 startActivity(sourceIntent);
                 break;
             case R.id.button_mode_receiver:
-                Intent receiverIntent = new Intent(this, SourceActivity.class);
+                spinProgressBar.setVisibility(ProgressBar.VISIBLE);
+
+                Intent receiverIntent = new Intent(this, ReceiverActivity.class);
                 startActivity(receiverIntent);
                 break;
             default:
                 Log.e(TAG, "Button pressed had no associated ID in its listener.");
         }
+        spinProgressBar.setVisibility(ProgressBar.INVISIBLE);
+
     }
 
     @Override
