@@ -128,7 +128,7 @@ public class MeshConnector extends Service implements MeshStateListener {
             case 0x02: // Pause
                 System.arraycopy(event.data,1,rawTimeStamp,0,8);
                 timestamp = ByteIntConvertor.bytesToLong(rawTimeStamp);
-                this.notifyPlay(timestamp);
+                this.notifyPause(timestamp);
                 Log.i(LOG_TAG,"Pause command received.");
                 break;
             case 0x03: // FileTransfer
