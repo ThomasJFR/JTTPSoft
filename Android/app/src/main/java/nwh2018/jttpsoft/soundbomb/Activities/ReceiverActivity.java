@@ -4,13 +4,17 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 
+import nwh2018.jttpsoft.soundbomb.BroadcastReceivers.LocalReceiver;
 import nwh2018.jttpsoft.soundbomb.R;
 import nwh2018.jttpsoft.soundbomb.Services.MeshConnector;
+import nwh2018.jttpsoft.soundbomb.Utilities.Utilities;
 
 public class ReceiverActivity extends AppCompatActivity {
 
@@ -50,6 +54,9 @@ public class ReceiverActivity extends AppCompatActivity {
         meshServiceIntent = new Intent(this, MeshConnector.class);
         bindService(meshServiceIntent, meshServiceConnection, Context.BIND_AUTO_CREATE);
         startService(meshServiceIntent);
+
+        LocalReceiver.subscribeToUpdates(LocalReceiver.RECEIVER_INDEX, this);
+
     }
 
     @Override
@@ -68,5 +75,18 @@ public class ReceiverActivity extends AppCompatActivity {
         meshConnector.revokeMaster();
         unbindService(meshServiceConnection);
         super.onDestroy();
+    }
+
+    public void playTrack(){
+        Utilities.parseByteArrayAsFile(meshConnector.getData());
+
+        try {
+            MediaPlayer mediaPlayer = MediaPlayer.create(getApplicationContext(), Uri.parse("BufferedSong.mp3"));
+            mediaPlayer.setLooping(false);
+            mediaPlayer.start();
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
     }
 }
