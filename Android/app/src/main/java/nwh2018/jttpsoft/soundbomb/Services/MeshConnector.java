@@ -17,6 +17,7 @@ import io.left.rightmesh.mesh.MeshStateListener;
 import io.left.rightmesh.util.RightMeshException;
 import io.reactivex.functions.Consumer;
 import nwh2018.jttpsoft.soundbomb.BroadcastReceivers.LocalReceiver;
+import nwh2018.jttpsoft.soundbomb.HelperTools.ByteIntConvertor;
 import nwh2018.jttpsoft.soundbomb.Services.MeshServiceBinder;
 import nwh2018.jttpsoft.soundbomb.Services.Message;
 
@@ -109,7 +110,35 @@ public class MeshConnector extends Service implements MeshStateListener {
     }
 
     private void handleDataReceived(MeshManager.RightMeshEvent e){
+        final MeshManager.DataReceivedEvent event = (MeshManager.DataReceivedEvent) e;
+        byte superByte = event.data[0];
+
+        byte[] rawTimeStamp = new byte[8];
+        long timestamp = 0;
+        switch (superByte){
+            case 0x01: // Play
+                System.arraycopy(event.data,1,rawTimeStamp,0,8);
+                timestamp = ByteIntConvertor.bytesToLong(rawTimeStamp);
+                this.notifyPlay(timestamp);
+                break;
+            case 0x02: // Pause
+                System.arraycopy(event.data,1,rawTimeStamp,0,8);
+                timestamp = ByteIntConvertor.bytesToLong(rawTimeStamp);
+                this.notifyPlay(timestamp);
+                break;
+            case 0x03: // FileTransfer
+                byte[] rawDataLength = new byte[8];
+                System.arraycopy(event.data,1,rawDataLength,0,8);
+                long dataLength = ByteIntConvertor.bytesToLong(rawDataLength);
+                MeshConnector.dataBuffer = new byte[(int) dataLength];
+                System.arraycopy(event.data,1+8,MeshConnector.dataBuffer,0,(int) dataLength);
+                this.notifyFileReceived();
+                break;
+            default:
+                // Invalid data!
+        }
     }
+
 
     private void handlePeerChanged(MeshManager.RightMeshEvent e){
         MeshManager.PeerChangedEvent event = (MeshManager.PeerChangedEvent) e;
@@ -139,7 +168,7 @@ public class MeshConnector extends Service implements MeshStateListener {
 
     private void notifyFileReceived(){
         Intent intent = new Intent(MeshConnector.this,LocalReceiver.class);
-        intent.putExtra("",Message.FILE_RECEIVED);
+        intent.putExtra("jttpsoft.soundbomb.DATA_RECEIVED_TRACK_STATE",Message.FILE_RECEIVED);
         sendBroadcast(intent);
     }
 
