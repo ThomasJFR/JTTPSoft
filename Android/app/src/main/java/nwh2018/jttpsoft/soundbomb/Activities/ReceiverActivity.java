@@ -7,11 +7,14 @@ import android.content.ServiceConnection;
 import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 
 import nwh2018.jttpsoft.soundbomb.R;
 import nwh2018.jttpsoft.soundbomb.Services.MeshConnector;
 
 public class ReceiverActivity extends AppCompatActivity {
+
+    private static final String TAG = "soundbomb.Receiver";
 
     private MeshConnector meshConnector;
     private ServiceConnection meshServiceConnection;
@@ -28,6 +31,14 @@ public class ReceiverActivity extends AppCompatActivity {
             public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
                 MeshConnector.MeshServiceBinder binder = (MeshConnector.MeshServiceBinder)iBinder;
                 meshConnector = binder.getService();
+
+                int attemptCounter = 0;
+                for(; attemptCounter < 5; attemptCounter++){
+                    if(meshConnector.applyMaster())
+                        break;
+                }
+                if(attemptCounter == 4)
+                    Log.e(TAG, "Couldn't apply for master.");
 
             }
 
@@ -49,10 +60,12 @@ public class ReceiverActivity extends AppCompatActivity {
     @Override
     public void onBackPressed(){
         super.onBackPressed();
+        finish();
     }
 
     @Override
     public void onDestroy(){
+        meshConnector.revokeMaster();
         unbindService(meshServiceConnection);
         super.onDestroy();
     }
