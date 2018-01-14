@@ -59,4 +59,10 @@ public class Utilities {
             e.printStackTrace();
         }
     }
+
+    public static String getFileName(String filePath){
+        String[] chunks = filePath.split("/");
+        String[] nibbles = chunks[chunks.length - 1].split("\\.");
+        return nibbles[nibbles.length - 2];
+    }
 }

@@ -152,13 +152,17 @@ public class SourceActivity extends AppCompatActivity implements Button.OnClickL
                             Toast.LENGTH_LONG
                     ).show();
 
-                    tv_currentSong.setText("Current Song: " + newFile);
+                    tv_currentSong.setText("Current Song: " + Utilities.getFileName(newFile));
                     currentPath = newFile;
 
+                    if(mediaPlayer != null && mediaPlayer.isPlaying()) {
+                        mediaPlayer.pause();
+                        btn_play.setImageResource(R.drawable.play_button);
+                    }
                     mediaPlayer = MediaPlayer.create(getApplicationContext(), Uri.parse(currentPath));
                     mediaPlayer.setLooping(true);
 
-                } else {//if(resultCode == this.RESULT_OK) {
+                } else {
                     Toast.makeText(
                             this,
                             "Received NO result from file browser",
