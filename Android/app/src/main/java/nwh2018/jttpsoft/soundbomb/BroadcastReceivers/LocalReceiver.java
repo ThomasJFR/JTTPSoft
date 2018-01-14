@@ -10,6 +10,7 @@ import android.content.Intent;
 
 public class LocalReceiver extends BroadcastReceiver{
 
+    private static final String DATA_RECEIVED_MASTER_QUIT = "jttpsoft.soundbomb.DATA_RECEIVED_MASTER_QUIT";
     private static final String DATA_RECEIVED_FILE_DETAILS = "jttpsoft.soundbomb.DATA_RECEIVED_FILE_DETAILS";
 
     @Override
