@@ -162,7 +162,7 @@ public class MeshConnector extends Service implements MeshStateListener {
         String display = new String();
 
         //Self UUID
-        display = display + "Self:\n" + mm.getUuid().toString() + "\n";
+        display = display + "Self:\n" + (null==mm?"":mm.getUuid().toString()) + "\n";
 
         //Master
         display = display + "Master:\n" +
