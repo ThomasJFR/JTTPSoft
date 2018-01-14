@@ -13,6 +13,7 @@ public class LocalReceiver extends BroadcastReceiver{
     private static final String DATA_RECEIVED_MASTER_UPDATE = "jttpsoft.soundbomb.DATA_RECEIVED_MASTER_UPDATE";
     private static final String MASTER_STATE = "jttpsoft.soundbomb.MASTER_STATE";
     private static final String DATA_RECEIVED_FILE_DETAILS = "jttpsoft.soundbomb.DATA_RECEIVED_FILE_DETAILS";
+    private static final String DATA_RECEIVED_TRACK_STATE = "jttpsoft.soundbomb.DATA_RECEIVED_TRACK_STATE";
     private static final String BROADCAST_RECEIVED_PLAY = "jttpsoft.soundbomb.PLAY_TIMESTAMP";
     private static final String BROADCAST_RECEIVED_PAUSE = "jttpsoft.soundbomb.PAUSE_TIMESTAMP";
 
