@@ -19,14 +19,15 @@
         <activity
             android:name=".Activities.SourceActivity"
             android:label="@string/title_activity_source"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".Activities.ReceiverActivity" />
-        <activity android:name=".Activities.FileBrowserActivity" />
+            android:theme="@style/AppTheme.NoActionBar"
+            android:launchMode="singleTask"/>
+        <activity
+            android:name=".Activities.ReceiverActivity"
+            android:launchMode="singleTask"/>
+        <activity
+            android:name=".Activities.FileBrowserActivity"
+            android:launchMode="singleTask"/>
 
-        <service
-            android:name=".Services.AudioPlayerService"
-            android:enabled="true"
-            android:exported="true"></service>
     </application>
 
 </manifest>

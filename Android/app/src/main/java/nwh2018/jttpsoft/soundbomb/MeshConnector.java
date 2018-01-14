@@ -1,6 +1,7 @@
 package nwh2018.jttpsoft.soundbomb;
 
 import android.app.Activity;
+import android.util.Log;
 
 import java.util.HashSet;
 
@@ -14,6 +15,8 @@ import io.left.rightmesh.mesh.MeshStateListener;
  */
 
 public class MeshConnector implements MeshStateListener {
+
+    private static final String TAG = "soundbomb.MeshConnector";
 
     AndroidMeshManager meshManager = null;
     HashSet<MeshID> users = new HashSet<>();
@@ -30,6 +33,16 @@ public class MeshConnector implements MeshStateListener {
         try {
             meshManager.resume();
         } catch (MeshService.ServiceDisconnectedException e) {
+            Log.e(TAG, "Problem resuming mesh manager");
+            e.printStackTrace();
+        }
+    }
+
+    public void stop(){
+        try {
+            meshManager.stop();
+        } catch (MeshService.ServiceDisconnectedException e) {
+            Log.e(TAG, "Problem stopping the mesh manager");
             e.printStackTrace();
         }
     }
@@ -38,6 +51,7 @@ public class MeshConnector implements MeshStateListener {
         try {
             meshManager.stop();
         } catch (MeshService.ServiceDisconnectedException e) {
+            Log.wtf(TAG, "Problem stopping the mesh manager. This may cause problems to this phone - address ASAP");
             e.printStackTrace();
         }
     }
