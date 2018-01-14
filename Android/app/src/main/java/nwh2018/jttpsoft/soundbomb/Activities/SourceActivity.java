@@ -7,11 +7,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.media.MediaPlayer;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.IBinder;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -20,8 +17,6 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import java.io.File;
 
 import io.left.rightmesh.util.RightMeshException;
 import nwh2018.jttpsoft.soundbomb.BroadcastReceivers.LocalReceiver;
@@ -90,34 +85,34 @@ public class SourceActivity extends AppCompatActivity implements Button.OnClickL
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                new AlertDialog.Builder(SourceActivity.this)
-                        .setMessage("Would you like to select a new file to play?")
-                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                Intent fileExploreIntent = new Intent(
-                                        FileBrowserActivity.INTENT_ACTION_SELECT_FILE,
-                                        null,
-                                        SourceActivity.this,
-                                        FileBrowserActivity.class
-                                );
-                                fileExploreIntent.putExtra(
-                                        FileBrowserActivity.startDirectoryParameter,
-                                        "/system/media/audio");
-                                startActivityForResult(
-                                        fileExploreIntent,
-                                        SELECT_FILE_CODE
-                                );
-                            }
-                        })
-                        .setNegativeButton("Cancel", null)
-                        .show();
-            }
-        });
+//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+//        fab.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                new AlertDialog.Builder(SourceActivity.this)
+//                        .setMessage("Would you like to select a new file to play?")
+//                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialogInterface, int i) {
+//                                Intent fileExploreIntent = new Intent(
+//                                        FileBrowserActivity.INTENT_ACTION_SELECT_FILE,
+//                                        null,
+//                                        SourceActivity.this,
+//                                        FileBrowserActivity.class
+//                                );
+//                                fileExploreIntent.putExtra(
+//                                        FileBrowserActivity.startDirectoryParameter,
+//                                        "/system/media/audio");
+//                                startActivityForResult(
+//                                        fileExploreIntent,
+//                                        SELECT_FILE_CODE
+//                                );
+//                            }
+//                        })
+//                        .setNegativeButton("Cancel", null)
+//                        .show();
+//            }
+//        });
 
         //SOME STUFF TO RUN ONCE
         new AlertDialog.Builder(this)
@@ -172,7 +167,7 @@ public class SourceActivity extends AppCompatActivity implements Button.OnClickL
                         mediaPlayer.pause();
                         btn_play.setImageResource(R.drawable.play_button);
                     }
-                    mediaPlayer = MediaPlayer.create(getApplicationContext(), Uri.parse(currentPath));
+                    mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.rideofthevalkyries);
                     mediaPlayer.setLooping(true);
 
                 } else {
@@ -192,6 +187,7 @@ public class SourceActivity extends AppCompatActivity implements Button.OnClickL
     @Override
     public void onDestroy(){
         unbindService(meshServiceConnection);
+        mediaPlayer.stop();
         Toast.makeText(this.getApplicationContext(),"Source mode disabled.", Toast.LENGTH_LONG).show();
         meshConnector.revokeMaster();
         super.onDestroy();
@@ -223,10 +219,8 @@ public class SourceActivity extends AppCompatActivity implements Button.OnClickL
                         mediaPlayer.pause();
                     }
                     else{
-                        meshConnector.sendPause(0);
                         meshConnector.setData(Utilities.getFileAsByteArray(currentPath));
-                        meshConnector.sendPause(0); //FIXME Temporary until fix is found =D
-                        meshConnector.sendFile();
+                        //meshConnector.sendFile();
                         long timestamp = TimeManager.getCurrentTimeStamp() + 1; // one second delay for file transfer
                         meshConnector.sendPlay(timestamp);
 

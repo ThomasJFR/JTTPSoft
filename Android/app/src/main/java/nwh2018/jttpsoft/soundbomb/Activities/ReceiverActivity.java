@@ -23,6 +23,10 @@ public class ReceiverActivity extends AppCompatActivity {
 
     private static final String TAG = "soundbomb.Receiver";
 
+    private LocalReceiver localReceiver;
+
+    MediaPlayer mediaPlayer;
+
     private MeshConnector meshConnector;
     private ServiceConnection meshServiceConnection;
     private Intent meshServiceIntent;
@@ -56,6 +60,9 @@ public class ReceiverActivity extends AppCompatActivity {
     @Override
     public void onStart(){
         super.onStart();
+        localReceiver = new LocalReceiver();
+        registerReceiver(localReceiver, LocalReceiver.generateIntentFilter());
+
         this.updatePeerStatus();
     }
 
@@ -83,21 +90,15 @@ public class ReceiverActivity extends AppCompatActivity {
         peerStatusView.setText(peerStatus);
     }
 
-    public void playTrack(){
+    public void play(){
+        if(mediaPlayer == null) {
+            mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.rideofthevalkyries);
+            mediaPlayer.setLooping(true);
+        }
+        mediaPlayer.start();
+    }
 
-        Log.e("LOOK HERE!!~~", "Data: " + Arrays.toString(meshConnector.getData()));
-
-        return;
-
-//        Utilities.parseByteArrayAsFile(meshConnector.getData(), ".ogg");
-//
-//        try {
-//            MediaPlayer mediaPlayer = MediaPlayer.create(getApplicationContext(), Uri.parse("BufferedSong.ogg"));
-//            mediaPlayer.setLooping(false);
-//            mediaPlayer.start();
-//        }
-//        catch(Exception e){
-//            e.printStackTrace();
-//        }
+    public void pause(){
+        mediaPlayer.pause();
     }
 }

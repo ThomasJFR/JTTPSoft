@@ -62,11 +62,16 @@ public class TitleActivity extends AppCompatActivity implements Button.OnClickLi
 
         meshConnector = new MeshConnector();
 
-        registerReceiver(localReceiver, LocalReceiver.generateIntentFilter());
-
         meshServiceIntent = new Intent(this, MeshConnector.class);
         bindService(meshServiceIntent, meshServiceConnection, Context.BIND_AUTO_CREATE);
         startService(meshServiceIntent);
+    }
+
+    @Override
+    public void onStart(){
+        localReceiver = new LocalReceiver();
+        registerReceiver(localReceiver, LocalReceiver.generateIntentFilter());
+        super.onStart();
     }
 
     @Override

@@ -35,6 +35,8 @@ public class LocalReceiver extends BroadcastReceiver{
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        Log.i(TAG, "Received a broadcast");
+
         final String action = intent.getAction();
 
         switch(action){
@@ -51,14 +53,18 @@ public class LocalReceiver extends BroadcastReceiver{
                 break;
             case DATA_RECEIVED_TRACK_STATE:
                 Log.i(TAG, "New Track data received");
-                if(intent.getIntExtra(DATA_RECEIVED_TRACK, -1) != -1){
-                    Log.i(TAG, "Printing track data");
-                    ((ReceiverActivity)activityList.get(RECEIVER_INDEX)).playTrack();
-                }
-                if(intent.getIntExtra(BROADCAST_RECEIVED_PLAY, -1) != -1)
+//                if(intent.getIntExtra(DATA_RECEIVED_TRACK, -1) != -1){
+//                    Log.i(TAG, "Printing track data");
+//                    ((ReceiverActivity)activityList.get(RECEIVER_INDEX)).playTrack();
+//                }
+                if(intent.getLongExtra(BROADCAST_RECEIVED_PLAY, -1) != -1){
                     Toast.makeText(context, "Received a play command", Toast.LENGTH_SHORT).show();
-                if(intent.getIntExtra(BROADCAST_RECEIVED_PAUSE, -1) != -1)
+                    ((ReceiverActivity)activityList.get(RECEIVER_INDEX)).play();
+                }
+                if(intent.getLongExtra(BROADCAST_RECEIVED_PAUSE, -1) != -1) {
                     Toast.makeText(context, "Received a pause command", Toast.LENGTH_SHORT).show();
+                    ((ReceiverActivity)activityList.get(RECEIVER_INDEX)).pause();
+                }
             default:
                 break;
         }
