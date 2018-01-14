@@ -1,49 +1,122 @@
 package nwh2018.jttpsoft.soundbomb;
 
 import android.app.Activity;
+import android.app.Service;
+import android.content.Intent;
+import android.os.IBinder;
 
 import java.util.HashSet;
 
 import io.left.rightmesh.android.AndroidMeshManager;
 import io.left.rightmesh.android.MeshService;
 import io.left.rightmesh.id.MeshID;
+import io.left.rightmesh.mesh.MeshManager;
 import io.left.rightmesh.mesh.MeshStateListener;
+import io.left.rightmesh.util.RightMeshException;
+import io.reactivex.functions.Consumer;
+import nwh2018.jttpsoft.soundbomb.Services.MeshServiceBinder;
+import nwh2018.jttpsoft.soundbomb.Services.Message;
+
+import static io.left.rightmesh.mesh.MeshManager.REMOVED;
 
 /**
  * Created by Thomas on 2018-01-13.
  */
 
-public class MeshConnector implements MeshStateListener {
+public class MeshConnector extends Service implements MeshStateListener {
 
-    AndroidMeshManager meshManager = null;
+    // Port to bind app to.
+    private final static int MESH_PORT = 2169;
+
+    // Master MashID
+    private static MeshID master;
+
+    // MeshManager instance - interface to the mesh network.
+    AndroidMeshManager mm = null;
+
+    // Set to keep track of peers connected to the mesh.
     HashSet<MeshID> users = new HashSet<>();
 
     /**
      * Manages all current RightMesh connections.
      * @param srcActivity The activity from which the MeshManager is being used.
      */
+    /*
     public MeshConnector(Activity srcActivity){
-        meshManager = AndroidMeshManager.getInstance(srcActivity, this);
+        //meshManager = AndroidMeshManager.getInstance(srcActivity, this);
+    }
+    */
+
+    @Override
+    public int onStartCommand(Intent intent,int flags, int startID){
+
+        mm = AndroidMeshManager.getInstance(MeshConnector.this,MeshConnector.this);
+
+        return Service.START_NOT_STICKY;
     }
 
-    public void resume() {
-        try {
-            meshManager.resume();
-        } catch (MeshService.ServiceDisconnectedException e) {
-            e.printStackTrace();
-        }
+    @Override
+    public IBinder onBind(Intent intent){
+
+        mm = AndroidMeshManager.getInstance(MeshConnector.this,MeshConnector.this);
+
+        return new MeshServiceBinder(this);
     }
 
-    public void close(){
+    @Override
+    public void onDestroy(){
         try {
-            meshManager.stop();
+            super.onDestroy();
+            mm.stop();
         } catch (MeshService.ServiceDisconnectedException e) {
             e.printStackTrace();
         }
     }
 
     @Override
-    public void meshStateChanged(MeshID meshID, int i) {
+    public void meshStateChanged(MeshID uuid,int state){
+        if(state==MeshStateListener.SUCCESS){
+            try{
+                mm.bind(MESH_PORT);
 
+                mm.on(MeshManager.DATA_RECEIVED,
+                        new Consumer() {
+                            @Override
+                            public void accept(Object o) throws Exception {
+                                handleDataReceived((MeshManager.RightMeshEvent) o);
+                            }
+                        });
+
+                mm.on(MeshManager.PEER_CHANGED,
+                        new Consumer() {
+                            @Override
+                            public void accept(Object o) throws Exception {
+                                handlePeerChanged((MeshManager.RightMeshEvent) o);
+                            }
+                        });
+            } catch (RightMeshException e){
+                // Not Implemented yet
+            }
+        }
+    }
+
+    private void handleDataReceived(MeshManager.RightMeshEvent e){
+
+    }
+
+    private void handlePeerChanged(MeshManager.RightMeshEvent e){
+        MeshManager.PeerChangedEvent event = (MeshManager.PeerChangedEvent) e;
+        if(event.state != REMOVED && !users.contains(event.peerUuid))
+            users.add(event.peerUuid);
+        else if (event.state == REMOVED){
+            users.remove(event.peerUuid);
+            if(MeshConnector.master.equals(event.peerUuid)){
+                Intent intent = new Intent(MeshConnector.this,);
+            }
+        }
+    }
+
+    public void setMaster(MeshID master){
+        MeshConnector.master = master;
     }
 }
