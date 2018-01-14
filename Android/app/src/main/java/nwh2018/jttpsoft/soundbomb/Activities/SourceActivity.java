@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import nwh2018.jttpsoft.soundbomb.MeshConnector;
@@ -28,6 +29,7 @@ public class SourceActivity extends AppCompatActivity implements Button.OnClickL
     //private MeshConnector meshConnector; TODO REENABLE ME
 
     //--UI ELEMENTS--
+    TextView tv_currentSong;
     Button btn_play;
 
     @Override
@@ -39,6 +41,8 @@ public class SourceActivity extends AppCompatActivity implements Button.OnClickL
        // meshConnector = new MeshConnector(this); TODO REENABLE ME
 
         //--REGISTER UI ELEMENTS--
+        tv_currentSong = (TextView)findViewById(R.id.tv_currentSong);
+
         btn_play = (Button)findViewById(R.id.btn_play);
         btn_play.setOnClickListener(this);
 
@@ -102,6 +106,9 @@ public class SourceActivity extends AppCompatActivity implements Button.OnClickL
                             "Received path from file browser:" + newFile,
                             Toast.LENGTH_LONG
                     ).show();
+
+                    tv_currentSong.setText("Current Song: " + newFile);
+
                 } else {//if(resultCode == this.RESULT_OK) {
                     Toast.makeText(
                             this,

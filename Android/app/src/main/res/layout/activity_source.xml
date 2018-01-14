@@ -29,12 +29,13 @@
         android:layout_weight="5"/>
 
     <TextView
+        android:id="@+id/tv_currentSong"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:textSize="@dimen/text_size_large"
         android:gravity="center_horizontal"
-        android:text="Current Song: Nothing" />
+        android:text="Current Song: None" />
 
     <Button
         android:id="@+id/btn_play"
@@ -42,7 +43,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="0.5"
-        android:text="Play" />
+        android:text="Off" />
 
     <!--
     <android.support.design.widget.FloatingActionButton
