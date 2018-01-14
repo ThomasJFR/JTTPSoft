@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.widget.Toast;
 
 /**
  * Created by Thomas on 2018-01-13.
@@ -35,7 +36,11 @@ public class LocalReceiver extends BroadcastReceiver{
                 break;
             case DATA_RECEIVED_FILE_DETAILS:
                 break;
-            case "temp":
+            case DATA_RECEIVED_TRACK_STATE:
+                if(intent.getIntExtra(BROADCAST_RECEIVED_PLAY, -1) != -1)
+                    Toast.makeText(context, "Received a play command", Toast.LENGTH_SHORT).show();
+                if(intent.getIntExtra(BROADCAST_RECEIVED_PAUSE, -1) != -1)
+                    Toast.makeText(context, "Received a pause command", Toast.LENGTH_SHORT).show();
             default:
                 break;
         }
