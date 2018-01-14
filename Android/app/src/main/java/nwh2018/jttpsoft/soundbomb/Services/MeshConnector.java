@@ -186,20 +186,16 @@ public class MeshConnector extends Service implements MeshStateListener {
         if(event.state != REMOVED && !users.contains(event.peerUuid)){
             Log.i(LOG_TAG,"User "+ event.peerUuid + " joined.");
             users.add(event.peerUuid);
-            try {
                 switch (this.pervMsg) {
                     case PLAY:
-                        this.sendPlay(0);
+                        this.soloPlay(event.peerUuid);
                         break;
                     case STOP:
-                        this.sendPlay(0);
+                        this.soloPause(event.peerUuid);
                         break;
                     case NONE:
                         break;
                 }
-            }catch (Exception err){
-                // Bad luck, however just give up
-            }
         }
         else if (event.state == REMOVED){
             Log.i(LOG_TAG,"User "+ event.peerUuid + " quited.");
@@ -240,6 +236,18 @@ public class MeshConnector extends Service implements MeshStateListener {
         MeshConnector.dataBuffer = data;
     }
 
+    private void soloPlay(MeshID peer){
+        byte[] buffer = new byte[9]; // one byte for command and eight bytes for timestamp(long)
+        buffer[0] = (byte) 0x001; // play
+        byte[] intermedianTimestamp = ByteIntConvertor.longToBytes(0);
+        System.arraycopy(intermedianTimestamp,0,buffer,1,8);
+        try{
+            mm.sendDataReliable(peer,MESH_PORT,buffer);
+        } catch (Exception e){
+            // Sad Face
+        }
+    }
+
     public void sendPlay(long timestamp) throws RightMeshException{
         byte[] buffer = new byte[9]; // one byte for command and eight bytes for timestamp(long)
         buffer[0] = (byte) 0x001; // play
@@ -249,6 +257,18 @@ public class MeshConnector extends Service implements MeshStateListener {
             mm.sendDataReliable(receiver,MESH_PORT,buffer);
         }
         this.pervMsg = MessageMemory.PLAY;
+    }
+
+    private void soloPause(MeshID peer){
+        byte[] buffer = new byte[9]; // one byte for command and eight bytes for timestamp(long)
+        buffer[0] = (byte) 0x002; // pause
+        byte[] intermedianTimestamp = ByteIntConvertor.longToBytes(0);
+        System.arraycopy(intermedianTimestamp,0,buffer,1,8);
+        try{
+            mm.sendDataReliable(peer,MESH_PORT,buffer);
+        } catch (Exception e){
+            // Sad Face
+        }
     }
 
     public void sendPause(long timestamp) throws RightMeshException{
