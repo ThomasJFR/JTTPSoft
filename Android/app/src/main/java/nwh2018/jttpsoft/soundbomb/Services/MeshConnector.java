@@ -224,7 +224,7 @@ public class MeshConnector extends Service implements MeshStateListener {
     }
 
     public boolean applyMaster(){
-        if(null!=this.getMaster())
+        if(null!=this.getMaster()&&!mm.getUuid().equals(this.getMaster()))
             return false;
         this.setMaster(mm.getUuid());
         return this.sendMastership(1);
@@ -233,8 +233,9 @@ public class MeshConnector extends Service implements MeshStateListener {
     public boolean revokeMaster(){
         if(null==this.getMaster())
             return false;
-        this.setMaster(null);
-        return this.sendMastership(0);
+        boolean result = this.sendMastership(0);
+        if(result) this.setMaster(null);
+        return result;
     }
 
     private boolean sendMastership(long operation){
