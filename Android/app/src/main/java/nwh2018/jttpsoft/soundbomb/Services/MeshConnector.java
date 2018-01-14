@@ -4,6 +4,7 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
+import android.util.Log;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -32,6 +33,8 @@ public class MeshConnector extends Service implements MeshStateListener {
     //private final static int MESH_CTR_PORT = 2169;
     //private final static int MESH_DATA_PORT = 3037;
 
+    private final static String LOG_TAG = "MC_TSA";
+
     // Master MashID
     private static MeshID master = null;
     private final IBinder binder = new MeshServiceBinder();
@@ -51,6 +54,8 @@ public class MeshConnector extends Service implements MeshStateListener {
         if(mm == null)
             mm = AndroidMeshManager.getInstance(MeshConnector.this,MeshConnector.this);
 
+        Log.i(LOG_TAG,"MC service started!");
+
         return Service.START_NOT_STICKY;
     }
 
@@ -60,6 +65,8 @@ public class MeshConnector extends Service implements MeshStateListener {
         if(mm == null)
             mm = AndroidMeshManager.getInstance(MeshConnector.this,MeshConnector.this);
 
+        Log.i(LOG_TAG,"MC service started!");
+
         return binder;
     }
 
@@ -68,6 +75,9 @@ public class MeshConnector extends Service implements MeshStateListener {
         try {
             super.onDestroy();
             mm.stop();
+
+            Log.i(LOG_TAG,"MC service destroyed!");
+
         } catch (MeshService.ServiceDisconnectedException e) {
             e.printStackTrace();
         }
@@ -95,6 +105,7 @@ public class MeshConnector extends Service implements MeshStateListener {
                             }
                         });
             } catch (RightMeshException e){
+                Log.e(LOG_TAG,"Unexpected exception in meshStateChanged()");
                 // Not Implemented yet
             }
         }
@@ -111,11 +122,13 @@ public class MeshConnector extends Service implements MeshStateListener {
                 System.arraycopy(event.data,1,rawTimeStamp,0,8);
                 timestamp = ByteIntConvertor.bytesToLong(rawTimeStamp);
                 this.notifyPlay(timestamp);
+                Log.i(LOG_TAG,"Play command received.");
                 break;
             case 0x02: // Pause
                 System.arraycopy(event.data,1,rawTimeStamp,0,8);
                 timestamp = ByteIntConvertor.bytesToLong(rawTimeStamp);
                 this.notifyPlay(timestamp);
+                Log.i(LOG_TAG,"Pause command received.");
                 break;
             case 0x03: // FileTransfer
                 byte[] rawDataLength = new byte[8];
@@ -124,6 +137,7 @@ public class MeshConnector extends Service implements MeshStateListener {
                 MeshConnector.dataBuffer = new byte[(int) dataLength];
                 System.arraycopy(event.data,1+8,MeshConnector.dataBuffer,0,(int) dataLength);
                 this.notifyFileReceived();
+                Log.i(LOG_TAG,"FileTransfer command received.");
                 break;
             case 0x04:
                 byte[] rawOperation = new byte[8];
@@ -132,9 +146,11 @@ public class MeshConnector extends Service implements MeshStateListener {
                 if(operation>0){
                     // Other peer sets Master
                     this.setMaster(event.peerUuid);
+                    Log.i(LOG_TAG,"New master received.");
                 } else {
                     // Current Master retired
                     this.setMaster(null);
+                    Log.i(LOG_TAG,"Master retire received.");
                 }
             default:
                 // Invalid data!
@@ -149,6 +165,8 @@ public class MeshConnector extends Service implements MeshStateListener {
         else if (event.state == REMOVED){
             users.remove(event.peerUuid);
             if(event.peerUuid.equals(MeshConnector.master)){
+                Log.e(LOG_TAG,"Master quit!");
+                this.revokeMaster();
                 Intent intent = new Intent("jttpsoft.soundbomb.DATA_RECEIVED_MASTER_UPDATE");
                 intent.putExtra("jttpsoft.soundbomb.MASTER_STATE",Message.MASTER_QUIT);
                 sendBroadcast(intent);
