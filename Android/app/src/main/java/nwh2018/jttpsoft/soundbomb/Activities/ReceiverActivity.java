@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.widget.TextView;
 import android.util.Log;
 
 import nwh2018.jttpsoft.soundbomb.BroadcastReceivers.LocalReceiver;
@@ -62,12 +63,23 @@ public class ReceiverActivity extends AppCompatActivity {
     @Override
     public void onStart(){
         super.onStart();
+        TextView peerStatusView = (TextView) findViewById(R.id.peerStatus);
+        String peerStatus = meshConnector.getPeerStatus();
+        peerStatusView.setText(peerStatus);
     }
 
     @Override
     public void onBackPressed(){
         super.onBackPressed();
         finish();
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        TextView peerStatusView = (TextView) findViewById(R.id.peerStatus);
+        String peerStatus = meshConnector.getPeerStatus();
+        peerStatusView.setText(peerStatus);
     }
 
     @Override
