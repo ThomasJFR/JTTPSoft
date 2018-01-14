@@ -14,6 +14,7 @@ import io.left.rightmesh.mesh.MeshManager;
 import io.left.rightmesh.mesh.MeshStateListener;
 import io.left.rightmesh.util.RightMeshException;
 import io.reactivex.functions.Consumer;
+import nwh2018.jttpsoft.soundbomb.BroadcastReceivers.LocalReceiver;
 import nwh2018.jttpsoft.soundbomb.Services.MeshServiceBinder;
 import nwh2018.jttpsoft.soundbomb.Services.Message;
 
@@ -111,7 +112,8 @@ public class MeshConnector extends Service implements MeshStateListener {
         else if (event.state == REMOVED){
             users.remove(event.peerUuid);
             if(MeshConnector.master.equals(event.peerUuid)){
-                Intent intent = new Intent(MeshConnector.this,);
+                Intent intent = new Intent(MeshConnector.this,LocalReceiver.class);
+                intent.setExtra();
             }
         }
     }
