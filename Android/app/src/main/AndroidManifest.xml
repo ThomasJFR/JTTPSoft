@@ -21,13 +21,22 @@
             android:name=".Activities.SourceActivity"
             android:label="@string/title_activity_source"
             android:theme="@style/AppTheme.NoActionBar"
-            android:launchMode="singleTask"/>
+            android:launchMode="singleTask"
+            android:configChanges="orientation|screenSize"/>
         <activity
             android:name=".Activities.ReceiverActivity"
-            android:launchMode="singleTask"/>
+            android:launchMode="singleTask"
+            android:configChanges="orientation|screenSize"/>
         <activity
             android:name=".Activities.FileBrowserActivity"
-            android:launchMode="singleTask"/>
+            android:launchMode="singleTask"
+            android:configChanges="orientation|screenSize"/>
+
+        <service
+            android:name=".Services.MeshConnector" />
+
+        <receiver
+            android:name=".BroadcastReceivers.LocalReceiver"/>
 
     </application>
 

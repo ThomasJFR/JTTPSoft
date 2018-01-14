@@ -6,7 +6,7 @@
     <!-- Text sizes -->
     <dimen name="text_size_medium">18sp</dimen>
     <dimen name="text_size_large">22sp</dimen>
-    <dimen name="text_size_x_large">28</dimen>
-    <dimen name="text_size_header">40</dimen>
+    <dimen name="text_size_x_large">28sp</dimen>
+    <dimen name="text_size_header">48sp</dimen>
     <dimen name="fab_margin">16dp</dimen>
 </resources>

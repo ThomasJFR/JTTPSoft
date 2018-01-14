@@ -1,4 +1,75 @@
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
+    android:background="@color/color_bg"
+    tools:context="nwh2018.jttpsoft.soundbomb.Activities.TitleActivity"
+    android:weightSum="10">
+
+    <Space
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
+
+    <TextView
+        android:id="@+id/tv_greetHeader"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="3"
+        android:text="@string/app_name"
+        android:textSize="@dimen/text_size_header"
+        android:textColor="@color/color_fg"
+        android:textAlignment="center"
+        android:fontFamily="casual"/>
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="2"
+        android:weightSum="2">
+
+        <Button
+            android:id="@+id/button_mode_source"
+            android:text="Source"
+            android:textSize="@dimen/text_size_medium"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"/>
+
+        <Button
+            android:id="@+id/button_mode_receiver"
+            android:text="Receiver"
+            android:textSize="@dimen/text_size_medium"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"/>
+
+    </TableRow>
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/logo"
+        android:layout_weight="2"/>
+
+    <ProgressBar
+        android:id="@+id/spinProgressBar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:visibility="invisible"/>
+
+</LinearLayout>
+
+<!--BELOW-
+
 <?xml version="1.0" encoding="utf-8"?>
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -22,8 +93,9 @@
         android:layout_weight="3"
         android:text="@string/app_name"
         android:textSize="@dimen/text_size_header"
-        android:textColor="@color/colorPrimary"
+        android:textColor="@color/color_fg"
         android:textAlignment="center"
+        android:fontFamily="casual"
         tools:layout_editor_absoluteY="365dp"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -67,4 +139,4 @@
         android:layout_weight="1"
         android:visibility="invisible"/>
 
-</LinearLayout>
+</LinearLayout>-->

@@ -1,8 +1,8 @@
 package nwh2018.jttpsoft.soundbomb.Services;
 
-import android.app.Activity;
 import android.app.Service;
 import android.content.Intent;
+import android.os.Binder;
 import android.os.IBinder;
 
 import java.util.Collections;
@@ -18,8 +18,6 @@ import io.left.rightmesh.util.RightMeshException;
 import io.reactivex.functions.Consumer;
 import nwh2018.jttpsoft.soundbomb.BroadcastReceivers.LocalReceiver;
 import nwh2018.jttpsoft.soundbomb.HelperTools.ByteIntConvertor;
-import nwh2018.jttpsoft.soundbomb.Services.MeshServiceBinder;
-import nwh2018.jttpsoft.soundbomb.Services.Message;
 
 import static io.left.rightmesh.mesh.MeshManager.REMOVED;
 
@@ -36,6 +34,7 @@ public class MeshConnector extends Service implements MeshStateListener {
 
     // Master MashID
     private static MeshID master = null;
+    private final IBinder binder = new MeshServiceBinder();
 
     // MeshManager instance - interface to the mesh network.
     AndroidMeshManager mm = null;
@@ -49,7 +48,8 @@ public class MeshConnector extends Service implements MeshStateListener {
     @Override
     public int onStartCommand(Intent intent,int flags, int startID){
 
-        mm = AndroidMeshManager.getInstance(MeshConnector.this,MeshConnector.this);
+        if(mm == null)
+            mm = AndroidMeshManager.getInstance(MeshConnector.this,MeshConnector.this);
 
         return Service.START_NOT_STICKY;
     }
@@ -57,9 +57,10 @@ public class MeshConnector extends Service implements MeshStateListener {
     @Override
     public IBinder onBind(Intent intent){
 
-        mm = AndroidMeshManager.getInstance(MeshConnector.this,MeshConnector.this);
+        if(mm == null)
+            mm = AndroidMeshManager.getInstance(MeshConnector.this,MeshConnector.this);
 
-        return new MeshServiceBinder(this);
+        return binder;
     }
 
     @Override
@@ -137,7 +138,7 @@ public class MeshConnector extends Service implements MeshStateListener {
         else if (event.state == REMOVED){
             users.remove(event.peerUuid);
             if(event.peerUuid.equals(MeshConnector.master)){
-                Intent intent = new Intent(MeshConnector.this,LocalReceiver.class);
+                Intent intent = new Intent("jttpsoft.soundbomb.DATA_RECEIVED_MASTER_UPDATE");
                 intent.putExtra("jttpsoft.soundbomb.MASTER_STATE",Message.MASTER_QUIT);
                 sendBroadcast(intent);
             }
@@ -145,20 +146,20 @@ public class MeshConnector extends Service implements MeshStateListener {
     }
 
     private void notifyPlay(long timestamp){
-        Intent intent = new Intent(MeshConnector.this,LocalReceiver.class);
+        Intent intent = new Intent("jttpsoft.soundbomb.DATA_RECEIVED_TRACK_STATE");
         intent.putExtra("jttpsoft.soundbomb.PLAY_TIMESTAMP",timestamp);
         sendBroadcast(intent);
     }
 
     private void notifyPause(long timestamp){
-        Intent intent = new Intent(MeshConnector.this,LocalReceiver.class);
+        Intent intent = new Intent("jttpsoft.soundbomb.DATA_RECEIVED_TRACK_STATE");
         intent.putExtra("jttpsoft.soundbomb.PAUSE_TIMESTAMP",timestamp);
         sendBroadcast(intent);
     }
 
     private void notifyFileReceived(){
-        Intent intent = new Intent(MeshConnector.this,LocalReceiver.class);
-        intent.putExtra("jttpsoft.soundbomb.DATA_RECEIVED_TRACK_STATE",Message.FILE_RECEIVED);
+        Intent intent = new Intent("jttpsoft.soundbomb.DATA_RECEIVED_TRACK_STATE");
+        intent.putExtra("jttpsoft.soundbomb.DATA_RECEIVED_TRACK",Message.FILE_RECEIVED);
         sendBroadcast(intent);
     }
 
@@ -213,5 +214,12 @@ public class MeshConnector extends Service implements MeshStateListener {
 
     public void setMaster(MeshID master){
         MeshConnector.master = master;
+    }
+
+    public class MeshServiceBinder extends Binder {
+        public MeshConnector getService(){
+            return MeshConnector.this;
+        }
+
     }
 }

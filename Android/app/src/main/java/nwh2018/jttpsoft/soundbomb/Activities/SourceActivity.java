@@ -1,9 +1,16 @@
 package nwh2018.jttpsoft.soundbomb.Activities;
 
 import android.app.AlertDialog;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.ServiceConnection;
+import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.IBinder;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -14,16 +21,36 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import nwh2018.jttpsoft.soundbomb.R;
+import java.io.File;
 
+import io.left.rightmesh.util.RightMeshException;
+import nwh2018.jttpsoft.soundbomb.R;
+import nwh2018.jttpsoft.soundbomb.Services.MeshConnector;
+import nwh2018.jttpsoft.soundbomb.Utilities.Utilities;
 public class SourceActivity extends AppCompatActivity implements Button.OnClickListener{
+
+    private MeshConnector meshConnector;
+    private ServiceConnection  meshServiceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+            MeshConnector.MeshServiceBinder binder = (MeshConnector.MeshServiceBinder)iBinder;
+            meshConnector = binder.getService();
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName componentName) {
+            meshConnector = null;
+        }
+    };;
+    private Intent meshServiceIntent;
 
     private static final String TAG = "soundbomb.Source";
 
     private static final int SELECT_FILE_CODE = 11;
 
-    //--MESH CONNECTOR--
-    //private MeshConnector meshConnector; TODO REENABLE ME
+    //--Song Stuff--
+    private String currentPath;
+    private MediaPlayer mediaPlayer;
 
     //--UI ELEMENTS--
     TextView tv_currentSong;
@@ -35,7 +62,11 @@ public class SourceActivity extends AppCompatActivity implements Button.OnClickL
         setContentView(R.layout.activity_source);
 
         //--CREATE WORKERS--
-       // meshConnector = new MeshConnector(this); TODO REENABLE ME
+        meshConnector = new MeshConnector();
+
+        meshServiceIntent = new Intent(this, MeshConnector.class);
+        bindService(meshServiceIntent, meshServiceConnection, Context.BIND_AUTO_CREATE);
+        startService(meshServiceIntent);
 
         //--REGISTER UI ELEMENTS--
         tv_currentSong = (TextView)findViewById(R.id.tv_currentSong);
@@ -87,8 +118,6 @@ public class SourceActivity extends AppCompatActivity implements Button.OnClickL
                                 SourceActivity.this,
                                 FileBrowserActivity.class
                         );
-
-
                         fileExploreIntent.putExtra(
                                 FileBrowserActivity.startDirectoryParameter,
                                 "/system/media/audio");
@@ -105,7 +134,6 @@ public class SourceActivity extends AppCompatActivity implements Button.OnClickL
 
     @Override
     public void onResume(){
-//        meshConnector.resume(); TODO REENABLE ME
         super.onResume();
     }
 
@@ -125,6 +153,10 @@ public class SourceActivity extends AppCompatActivity implements Button.OnClickL
                     ).show();
 
                     tv_currentSong.setText("Current Song: " + newFile);
+                    currentPath = newFile;
+
+                    mediaPlayer = MediaPlayer.create(getApplicationContext(), Uri.parse(currentPath));
+                    mediaPlayer.setLooping(true);
 
                 } else {//if(resultCode == this.RESULT_OK) {
                     Toast.makeText(
@@ -142,17 +174,45 @@ public class SourceActivity extends AppCompatActivity implements Button.OnClickL
 
     @Override
     public void onDestroy(){
-//        meshConnector.close();TODO REENABLE ME
-
+        unbindService(meshServiceConnection);
         Toast.makeText(this.getApplicationContext(),"Source mode disabled.", Toast.LENGTH_LONG).show();
         super.onDestroy();
+    }
+
+    public void onBackPresssed(){
+        try {
+            meshConnector.sendPause(0);
+        } catch (RightMeshException e) {
+            e.printStackTrace();
+        }
+        super.onBackPressed();
     }
 
     @Override
     public void onClick(View view) {
         switch(view.getId()){
             case R.id.btn_play:
-                btn_play.setImageResource(R.drawable.pause_button);
+
+                try {
+                    if(mediaPlayer.isPlaying()) {
+                        meshConnector.sendPause(0);
+
+                        btn_play.setImageResource(R.drawable.play_button);
+                        mediaPlayer.pause();
+                    }
+                    else{
+                        meshConnector.setData(Utilities.getFileAsByteArray(currentPath));
+                        meshConnector.sendPause(0); //FIXME Temporary until fix is found =D
+                        meshConnector.sendFile();
+                        meshConnector.sendPlay(0);
+
+                        btn_play.setImageResource(R.drawable.pause_button);
+                        mediaPlayer.start();
+                    }
+                }
+                catch (RightMeshException e) {
+                    e.printStackTrace();
+                }
                 break;
             default:
                 break;

@@ -1,21 +1,43 @@
 package nwh2018.jttpsoft.soundbomb.Activities;
 
 import android.app.AlertDialog;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.ServiceConnection;
+import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ProgressBar;
 
+import nwh2018.jttpsoft.soundbomb.BroadcastReceivers.LocalReceiver;
 import nwh2018.jttpsoft.soundbomb.R;
+import nwh2018.jttpsoft.soundbomb.Services.MeshConnector;
 
 public class TitleActivity extends AppCompatActivity implements Button.OnClickListener, Button.OnLongClickListener{
 
     private static final String TAG = "soundbomb.titleActivity";
+
+    private LocalReceiver localReceiver;
+
+    private MeshConnector meshConnector;
+    private ServiceConnection meshServiceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+            MeshConnector.MeshServiceBinder binder = (MeshConnector.MeshServiceBinder)iBinder;
+            meshConnector = binder.getService();
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName componentName) {
+            meshConnector = null;
+        }
+    };
+    Intent meshServiceIntent;
 
     Button btn_mode_source;
     Button btn_mode_receiver;
@@ -37,10 +59,19 @@ public class TitleActivity extends AppCompatActivity implements Button.OnClickLi
 
         spinProgressBar = (ProgressBar)findViewById(R.id.spinProgressBar);
         spinProgressBar.setIndeterminate(true);
+
+        meshConnector = new MeshConnector();
+
+        registerReceiver(localReceiver, LocalReceiver.generateIntentFilter());
+
+        meshServiceIntent = new Intent(this, MeshConnector.class);
+        bindService(meshServiceIntent, meshServiceConnection, Context.BIND_AUTO_CREATE);
+        startService(meshServiceIntent);
     }
 
     @Override
     public void onBackPressed(){
+        finish();
         super.onBackPressed();
     }
 
@@ -58,6 +89,7 @@ public class TitleActivity extends AppCompatActivity implements Button.OnClickLi
                 spinProgressBar.setVisibility(ProgressBar.VISIBLE);
 
                 Intent receiverIntent = new Intent(this, ReceiverActivity.class);
+
                 startActivity(receiverIntent);
                 break;
             default:
@@ -92,6 +124,11 @@ public class TitleActivity extends AppCompatActivity implements Button.OnClickLi
     @Override
     public void onDestroy(){
         //TODO dont forget to include (MeshManager Object).stop()
+        unbindService(meshServiceConnection);
         super.onDestroy();
+    }
+
+    public MeshConnector getMeshConnector(){
+        return meshConnector;
     }
 }
