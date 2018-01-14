@@ -78,10 +78,10 @@ public class ReceiverActivity extends AppCompatActivity {
     }
 
     public void playTrack(){
-        Utilities.parseByteArrayAsFile(meshConnector.getData());
+        Utilities.parseByteArrayAsFile(meshConnector.getData(), ".ogg");
 
         try {
-            MediaPlayer mediaPlayer = MediaPlayer.create(getApplicationContext(), Uri.parse("BufferedSong.mp3"));
+            MediaPlayer mediaPlayer = MediaPlayer.create(getApplicationContext(), Uri.parse("BufferedSong.ogg"));
             mediaPlayer.setLooping(false);
             mediaPlayer.start();
         }

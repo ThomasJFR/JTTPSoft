@@ -47,9 +47,9 @@ public class Utilities {
         return bytes;
     }
 
-    public static void parseByteArrayAsFile(byte[] bytes){
+    public static void parseByteArrayAsFile(byte[] bytes, String extension){
         //below is the different part
-        File someFile = new File("bufferedSong.mp3");
+        File someFile = new File("bufferedSong." + extension);
         try {
             FileOutputStream fos = new FileOutputStream(someFile);
             fos.write(bytes);
@@ -64,5 +64,11 @@ public class Utilities {
         String[] chunks = filePath.split("/");
         String[] nibbles = chunks[chunks.length - 1].split("\\.");
         return nibbles[nibbles.length - 2];
+    }
+
+    public static String getFileExtension(String filePath){
+        String[] chunks = filePath.split("/");
+        String[] nibbles = chunks[chunks.length - 1].split("\\.");
+        return nibbles[nibbles.length - 1];
     }
 }
