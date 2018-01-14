@@ -7,7 +7,8 @@
     android:orientation="vertical"
     android:gravity="center_horizontal"
     tools:context="nwh2018.jttpsoft.soundbomb.Activities.TitleActivity"
-    android:weightSum="10">
+    android:weightSum="10"
+    android:background="@drawable/background_grad">
 
     <Space
         android:layout_width="0dp"
@@ -19,9 +20,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="3"
-        android:text="@string/app_greet"
-        android:textSize="@dimen/text_size_large"
-        android:textColor="@color/colorPrimaryDark"
+        android:text="@string/app_name"
+        android:textSize="@dimen/text_size_header"
+        android:textColor="@color/colorPrimary"
         android:textAlignment="center"
         tools:layout_editor_absoluteY="365dp"
         app:layout_constraintRight_toRightOf="parent"

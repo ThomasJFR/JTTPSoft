@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -45,14 +46,34 @@ public class SourceActivity extends AppCompatActivity implements Button.OnClickL
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-//            }
-//        });
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                new AlertDialog.Builder(SourceActivity.this)
+                        .setMessage("Would you like to select a new file to play?")
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                Intent fileExploreIntent = new Intent(
+                                        FileBrowserActivity.INTENT_ACTION_SELECT_FILE,
+                                        null,
+                                        SourceActivity.this,
+                                        FileBrowserActivity.class
+                                );
+                                fileExploreIntent.putExtra(
+                                        FileBrowserActivity.startDirectoryParameter,
+                                        "/system/media/audio");
+                                startActivityForResult(
+                                        fileExploreIntent,
+                                        SELECT_FILE_CODE
+                                );
+                            }
+                        })
+                        .setNegativeButton("Cancel", null)
+                        .show();
+            }
+        });
 
         //SOME STUFF TO RUN ONCE
         new AlertDialog.Builder(this)
