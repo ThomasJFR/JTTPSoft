@@ -5,8 +5,10 @@ package nwh2018.jttpsoft.soundbomb.Services;
  */
 
 public enum Message {
-    PLAY_RECIEVED,
-    PAUSE_RECIEVED,
+    PLAY_RECEIVED,
+    PAUSE_RECEIVED,
+    FILE_RECEIVED,
+
 
     MASTER_QUIT;
 }

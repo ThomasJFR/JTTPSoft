@@ -30,6 +30,8 @@ public class MeshConnector extends Service implements MeshStateListener {
 
     // Port to bind app to.
     private final static int MESH_PORT = 2169;
+    //private final static int MESH_CTR_PORT = 2169;
+    //private final static int MESH_DATA_PORT = 3037;
 
     // Master MashID
     private static MeshID master = null;
@@ -104,7 +106,6 @@ public class MeshConnector extends Service implements MeshStateListener {
     }
 
     private void handleDataReceived(MeshManager.RightMeshEvent e){
-
     }
 
     private void handlePeerChanged(MeshManager.RightMeshEvent e){
@@ -120,7 +121,10 @@ public class MeshConnector extends Service implements MeshStateListener {
         }
     }
 
-
+    private void notifyPlay(long timestamp){
+        Intent intent = new Intent(MeshConnector.this,LocalReceiver.class);
+        intent.putExtra("",timestamp);
+    }
 
     public Set<MeshID> getPeers(){
         return Collections.unmodifiableSet(this.users);
