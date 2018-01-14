@@ -126,6 +126,10 @@ public class MeshConnector extends Service implements MeshStateListener {
         intent.putExtra("",timestamp);
     }
 
+    private void notifyPause(long timestamp){
+        
+    }
+
     public Set<MeshID> getPeers(){
         return Collections.unmodifiableSet(this.users);
     }
