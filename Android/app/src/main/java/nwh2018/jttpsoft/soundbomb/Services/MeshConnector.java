@@ -125,6 +125,17 @@ public class MeshConnector extends Service implements MeshStateListener {
                 System.arraycopy(event.data,1+8,MeshConnector.dataBuffer,0,(int) dataLength);
                 this.notifyFileReceived();
                 break;
+            case 0x04:
+                byte[] rawOperation = new byte[8];
+                System.arraycopy(event.data,1,rawOperation,0,8);
+                long operation = ByteIntConvertor.bytesToLong(rawOperation);
+                if(operation>0){
+                    // Other peer sets Master
+                    this.setMaster(event.peerUuid);
+                } else {
+                    // Current Master retired
+                    this.setMaster(null);
+                }
             default:
                 // Invalid data!
         }
@@ -217,7 +228,36 @@ public class MeshConnector extends Service implements MeshStateListener {
         return MeshConnector.master;
     }
 
-    public void setMaster(MeshID master){
+    public boolean applyMaster(){
+        if(null!=this.getMaster())
+            return false;
+        this.setMaster(mm.getUuid());
+        return this.sendMastership(1);
+    }
+
+    public boolean revokeMaster(){
+        if(null==this.getMaster())
+            return false;
+        this.setMaster(null);
+        return this.sendMastership(0);
+    }
+
+    private boolean sendMastership(long operation){
+        try{
+            byte[] buffer = new byte[9];
+            buffer[0] = ((byte) 0x04 & 0x0ff);
+            byte[] operationByte = ByteIntConvertor.longToBytes(operation);
+            System.arraycopy(operationByte,0,buffer,1,8);
+            for(MeshID receiver: this.users) {
+                mm.sendDataReliable(receiver, MESH_PORT, buffer);
+            }
+            return true;
+        } catch (Exception e){
+            return false;
+        }
+    }
+
+    private void setMaster(MeshID master){
         MeshConnector.master = master;
     }
 
