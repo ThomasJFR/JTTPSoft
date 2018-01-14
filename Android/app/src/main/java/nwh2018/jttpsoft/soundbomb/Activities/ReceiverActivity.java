@@ -15,6 +15,7 @@ import android.util.Log;
 import java.util.Arrays;
 
 import nwh2018.jttpsoft.soundbomb.BroadcastReceivers.LocalReceiver;
+import nwh2018.jttpsoft.soundbomb.HelperTools.TimeManager;
 import nwh2018.jttpsoft.soundbomb.R;
 import nwh2018.jttpsoft.soundbomb.Services.MeshConnector;
 import nwh2018.jttpsoft.soundbomb.Utilities.Utilities;
@@ -79,6 +80,11 @@ public class ReceiverActivity extends AppCompatActivity {
     }
 
     @Override
+    public void onStop(){
+        unregisterReceiver(localReceiver);
+        super.onStop();
+    }
+    @Override
     public void onDestroy(){
         unbindService(meshServiceConnection);
         super.onDestroy();
@@ -90,11 +96,13 @@ public class ReceiverActivity extends AppCompatActivity {
         peerStatusView.setText(peerStatus);
     }
 
-    public void play(){
+    public void play(long timestamp){
         if(mediaPlayer == null) {
-            mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.rideofthevalkyries);
+            mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.highway);
             mediaPlayer.setLooping(true);
         }
+         // one second delay for file transfer
+        while(TimeManager.getCurrentTimeStamp()<timestamp); // sleep until timestamp triggered.
         mediaPlayer.start();
     }
 

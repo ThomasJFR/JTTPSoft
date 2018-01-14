@@ -167,7 +167,7 @@ public class SourceActivity extends AppCompatActivity implements Button.OnClickL
                         mediaPlayer.pause();
                         btn_play.setImageResource(R.drawable.play_button);
                     }
-                    mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.rideofthevalkyries);
+                    mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.highway);
                     mediaPlayer.setLooping(true);
 
                 } else {
@@ -221,7 +221,7 @@ public class SourceActivity extends AppCompatActivity implements Button.OnClickL
                     else{
                         meshConnector.setData(Utilities.getFileAsByteArray(currentPath));
                         //meshConnector.sendFile();
-                        long timestamp = TimeManager.getCurrentTimeStamp() + 1; // one second delay for file transfer
+                        long timestamp = TimeManager.getCurrentTimeStamp() + 3; // one second delay for file transfer
                         meshConnector.sendPlay(timestamp);
 
                         btn_play.setImageResource(R.drawable.pause_button);

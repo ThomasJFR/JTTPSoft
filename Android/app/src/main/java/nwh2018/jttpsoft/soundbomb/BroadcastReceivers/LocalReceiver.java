@@ -59,7 +59,7 @@ public class LocalReceiver extends BroadcastReceiver{
 //                }
                 if(intent.getLongExtra(BROADCAST_RECEIVED_PLAY, -1) != -1){
                     Toast.makeText(context, "Received a play command", Toast.LENGTH_SHORT).show();
-                    ((ReceiverActivity)activityList.get(RECEIVER_INDEX)).play();
+                    ((ReceiverActivity)activityList.get(RECEIVER_INDEX)).play(intent.getLongExtra(BROADCAST_RECEIVED_PLAY, -1));
                 }
                 if(intent.getLongExtra(BROADCAST_RECEIVED_PAUSE, -1) != -1) {
                     Toast.makeText(context, "Received a pause command", Toast.LENGTH_SHORT).show();

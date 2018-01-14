@@ -75,6 +75,13 @@ public class TitleActivity extends AppCompatActivity implements Button.OnClickLi
     }
 
     @Override
+    public void onStop(){
+        unregisterReceiver(localReceiver);
+        super.onStop();
+    }
+
+
+    @Override
     public void onBackPressed(){
         finish();
         super.onBackPressed();
