@@ -46,16 +46,6 @@ public class MeshConnector extends Service implements MeshStateListener {
     // Data Buffer
     private static byte[] dataBuffer;
 
-    /**
-     * Manages all current RightMesh connections.
-     * @param srcActivity The activity from which the MeshManager is being used.
-     */
-    /*
-    public MeshConnector(Activity srcActivity){
-        //meshManager = AndroidMeshManager.getInstance(srcActivity, this);
-    }
-    */
-
     @Override
     public int onStartCommand(Intent intent,int flags, int startID){
 
