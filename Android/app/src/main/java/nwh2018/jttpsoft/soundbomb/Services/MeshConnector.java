@@ -5,7 +5,9 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.Set;
 
 import io.left.rightmesh.android.AndroidMeshManager;
 import io.left.rightmesh.android.MeshService;
@@ -30,7 +32,7 @@ public class MeshConnector extends Service implements MeshStateListener {
     private final static int MESH_PORT = 2169;
 
     // Master MashID
-    private static MeshID master;
+    private static MeshID master = null;
 
     // MeshManager instance - interface to the mesh network.
     AndroidMeshManager mm = null;
@@ -111,11 +113,21 @@ public class MeshConnector extends Service implements MeshStateListener {
             users.add(event.peerUuid);
         else if (event.state == REMOVED){
             users.remove(event.peerUuid);
-            if(MeshConnector.master.equals(event.peerUuid)){
+            if(event.peerUuid.equals(MeshConnector.master)){
                 Intent intent = new Intent(MeshConnector.this,LocalReceiver.class);
-                intent.setExtra();
+                intent.putExtra("jttpsoft.soundbomb.MASTER_STATE",Message.MASTER_QUIT);
             }
         }
+    }
+
+
+
+    public Set<MeshID> getPeers(){
+        return Collections.unmodifiableSet(this.users);
+    }
+
+    public MeshID getMaster(){
+        return MeshConnector.master;
     }
 
     public void setMaster(MeshID master){
