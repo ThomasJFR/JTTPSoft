@@ -1,4 +1,4 @@
-package nwh2018.jttpsoft.soundbombz;
+package nwh2018.jttpsoft.soundbomb.Services;
 
 import android.app.Activity;
 import android.app.Service;
