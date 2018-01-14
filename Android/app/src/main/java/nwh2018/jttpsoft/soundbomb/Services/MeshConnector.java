@@ -20,6 +20,7 @@ import io.left.rightmesh.util.RightMeshException;
 import io.reactivex.functions.Consumer;
 import nwh2018.jttpsoft.soundbomb.BroadcastReceivers.LocalReceiver;
 import nwh2018.jttpsoft.soundbomb.HelperTools.ByteIntConvertor;
+import nwh2018.jttpsoft.soundbomb.Services.MessageMemory;
 
 import static io.left.rightmesh.mesh.MeshManager.REMOVED;
 
@@ -48,6 +49,9 @@ public class MeshConnector extends Service implements MeshStateListener {
 
     // Data Buffer
     private static byte[] dataBuffer;
+
+    // Previous message
+    private MessageMemory pervMsg = MessageMemory.NONE;
 
     @Override
     public int onStartCommand(Intent intent,int flags, int startID){
@@ -182,6 +186,16 @@ public class MeshConnector extends Service implements MeshStateListener {
         if(event.state != REMOVED && !users.contains(event.peerUuid)){
             Log.i(LOG_TAG,"User "+ event.peerUuid + " joined.");
             users.add(event.peerUuid);
+                switch (this.pervMsg) {
+                    case PLAY:
+                        this.soloPlay(event.peerUuid);
+                        break;
+                    case STOP:
+                        this.soloPause(event.peerUuid);
+                        break;
+                    case NONE:
+                        break;
+                }
         }
         else if (event.state == REMOVED){
             Log.i(LOG_TAG,"User "+ event.peerUuid + " quited.");
@@ -222,6 +236,18 @@ public class MeshConnector extends Service implements MeshStateListener {
         MeshConnector.dataBuffer = data;
     }
 
+    private void soloPlay(MeshID peer){
+        byte[] buffer = new byte[9]; // one byte for command and eight bytes for timestamp(long)
+        buffer[0] = (byte) 0x001; // play
+        byte[] intermedianTimestamp = ByteIntConvertor.longToBytes(0);
+        System.arraycopy(intermedianTimestamp,0,buffer,1,8);
+        try{
+            mm.sendDataReliable(peer,MESH_PORT,buffer);
+        } catch (Exception e){
+            // Sad Face
+        }
+    }
+
     public void sendPlay(long timestamp) throws RightMeshException{
         byte[] buffer = new byte[9]; // one byte for command and eight bytes for timestamp(long)
         buffer[0] = (byte) 0x001; // play
@@ -229,6 +255,19 @@ public class MeshConnector extends Service implements MeshStateListener {
         System.arraycopy(intermedianTimestamp,0,buffer,1,8);
         for(MeshID receiver: this.users){
             mm.sendDataReliable(receiver,MESH_PORT,buffer);
+        }
+        this.pervMsg = MessageMemory.PLAY;
+    }
+
+    private void soloPause(MeshID peer){
+        byte[] buffer = new byte[9]; // one byte for command and eight bytes for timestamp(long)
+        buffer[0] = (byte) 0x002; // pause
+        byte[] intermedianTimestamp = ByteIntConvertor.longToBytes(0);
+        System.arraycopy(intermedianTimestamp,0,buffer,1,8);
+        try{
+            mm.sendDataReliable(peer,MESH_PORT,buffer);
+        } catch (Exception e){
+            // Sad Face
         }
     }
 
@@ -245,6 +284,7 @@ public class MeshConnector extends Service implements MeshStateListener {
         catch (RuntimeException re){
             re.printStackTrace();
         }
+        this.pervMsg = MessageMemory.STOP;
     }
 
     public void sendFile() throws RightMeshException{
@@ -280,6 +320,7 @@ public class MeshConnector extends Service implements MeshStateListener {
             return false;
         boolean result = this.sendMastership(0);
         if(result) this.setMaster(null);
+        if(result) this.pervMsg = MessageMemory.NONE;
         return result;
     }
 
