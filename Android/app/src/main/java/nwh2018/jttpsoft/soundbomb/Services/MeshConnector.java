@@ -42,6 +42,9 @@ public class MeshConnector extends Service implements MeshStateListener {
     // Set to keep track of peers connected to the mesh.
     HashSet<MeshID> users = new HashSet<>();
 
+    // Data Buffer
+    private static byte[] dataBuffer;
+
     /**
      * Manages all current RightMesh connections.
      * @param srcActivity The activity from which the MeshManager is being used.
@@ -117,17 +120,48 @@ public class MeshConnector extends Service implements MeshStateListener {
             if(event.peerUuid.equals(MeshConnector.master)){
                 Intent intent = new Intent(MeshConnector.this,LocalReceiver.class);
                 intent.putExtra("jttpsoft.soundbomb.MASTER_STATE",Message.MASTER_QUIT);
+                sendBroadcast(intent);
             }
         }
     }
 
     private void notifyPlay(long timestamp){
         Intent intent = new Intent(MeshConnector.this,LocalReceiver.class);
-        intent.putExtra("",timestamp);
+        intent.putExtra("jttpsoft.soundbomb.PLAY_TIMESTAMP",timestamp);
+        sendBroadcast(intent);
     }
 
     private void notifyPause(long timestamp){
-        
+        Intent intent = new Intent(MeshConnector.this,LocalReceiver.class);
+        intent.putExtra("jttpsoft.soundbomb.PAUSE_TIMESTAMP",timestamp);
+        sendBroadcast(intent);
+    }
+
+    private void notifyFileReceived(){
+        Intent intent = new Intent(MeshConnector.this,LocalReceiver.class);
+        intent.putExtra("",Message.FILE_RECEIVED);
+        sendBroadcast(intent);
+    }
+
+    public byte[] getData(){
+        return MeshConnector.dataBuffer;
+    }
+
+    public void setData(byte[] data){
+        MeshConnector.dataBuffer = data;
+    }
+
+    public void sendPlay(long timestamp){
+        // stub
+    }
+
+    public void sendPause(long timestamp){
+        // stub
+    }
+
+    public boolean sendFile(){
+
+        return false; // stub
     }
 
     public Set<MeshID> getPeers(){
