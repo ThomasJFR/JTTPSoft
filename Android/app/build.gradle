@@ -1,5 +1,34 @@
 apply plugin: 'com.android.application'
 
+buildscript {
+    ext {
+        artifactory_app_username = "JTTPSoft"
+        artifactory_app_password = "90964520d6a818100aa6bd0eef8b082a"
+        artifactory_app_key = "0xdb52b8326a5ad9675a77c7de16cc876a887812a2" //you need to be approved to obtain a key
+    }
+    repositories {
+        maven {
+            url "http://research.rightmesh.io/artifactory/libs-local"
+            credentials {
+                username artifactory_app_username
+                password artifactory_app_password
+            }
+        }
+        google()
+        mavenCentral()
+        jcenter()
+    }
+    dependencies {
+        classpath 'io.left.rightmesh:rightmesh-plugin:1.3'
+    }
+}
+apply plugin: 'io.left.rightmesh.rightmesh-plugin'
+preBuild.dependsOn("rightmesh")
+
+configurations.all {
+    resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
+}
+
 android {
     compileSdkVersion 26
     buildToolsVersion "26.0.0"
@@ -11,7 +40,13 @@ android {
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
+        multiDexEnabled true
     }
+
+    dexOptions {
+        javaMaxHeapSize "4g"
+    }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -19,6 +54,20 @@ android {
         }
     }
 }
+
+repositories {
+    mavenCentral()
+    jcenter()
+    google()
+    maven {
+        url "http://research.rightmesh.io/artifactory/libs-local"
+        credentials {
+            username artifactory_app_username
+            password artifactory_app_password
+        }
+    }
+}
+
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
@@ -30,4 +79,7 @@ dependencies {
     compile 'com.android.support:support-vector-drawable:26.+'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     testCompile 'junit:junit:4.12'
+
+    compile ('io.left.rightmesh:rightmesh-library-dev:0.4.0')
+    compile 'com.android.support:multidex:1.0.2'
 }
