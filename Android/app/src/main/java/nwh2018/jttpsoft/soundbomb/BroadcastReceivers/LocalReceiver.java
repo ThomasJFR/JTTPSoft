@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.util.Log;
 import android.widget.Toast;
 
 import java.util.HashMap;
@@ -17,6 +18,8 @@ import nwh2018.jttpsoft.soundbomb.Activities.ReceiverActivity;
  */
 
 public class LocalReceiver extends BroadcastReceiver{
+
+    private static final String TAG = "soundbomb.LocalRec";
 
     private static Map<Integer, Activity> activityList = new HashMap<>();
     public static final int SOURCE_INDEX = 0;
@@ -47,7 +50,9 @@ public class LocalReceiver extends BroadcastReceiver{
             case DATA_RECEIVED_FILE_DETAILS:
                 break;
             case DATA_RECEIVED_TRACK_STATE:
+                Log.i(TAG, "New Track data received");
                 if(intent.getIntExtra(DATA_RECEIVED_TRACK, -1) != -1){
+                    Log.i(TAG, "Printing track data");
                     ((ReceiverActivity)activityList.get(RECEIVER_INDEX)).playTrack();
                 }
                 if(intent.getIntExtra(BROADCAST_RECEIVED_PLAY, -1) != -1)

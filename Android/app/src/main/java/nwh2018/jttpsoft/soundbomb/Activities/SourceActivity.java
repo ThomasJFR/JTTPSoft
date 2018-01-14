@@ -37,6 +37,15 @@ public class SourceActivity extends AppCompatActivity implements Button.OnClickL
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
             MeshConnector.MeshServiceBinder binder = (MeshConnector.MeshServiceBinder)iBinder;
             meshConnector = binder.getService();
+
+            int attemptCounter = 0;
+            for(; attemptCounter < 5; attemptCounter++){
+                if(meshConnector.applyMaster())
+                    break;
+            }
+            if(attemptCounter == 4)
+                Log.e(TAG, "Couldn't apply for master.");
+
         }
 
         @Override
@@ -184,6 +193,7 @@ public class SourceActivity extends AppCompatActivity implements Button.OnClickL
     public void onDestroy(){
         unbindService(meshServiceConnection);
         Toast.makeText(this.getApplicationContext(),"Source mode disabled.", Toast.LENGTH_LONG).show();
+        meshConnector.revokeMaster();
         super.onDestroy();
     }
 
@@ -201,6 +211,10 @@ public class SourceActivity extends AppCompatActivity implements Button.OnClickL
         switch(view.getId()){
             case R.id.btn_play:
 
+                if(mediaPlayer == null || currentPath == null){
+                    Toast.makeText(this, "No song queued", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 try {
                     if(mediaPlayer.isPlaying()) {
                         meshConnector.sendPause(0);
