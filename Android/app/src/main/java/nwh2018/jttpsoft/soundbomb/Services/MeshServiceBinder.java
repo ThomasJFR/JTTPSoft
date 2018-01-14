@@ -3,7 +3,7 @@ package nwh2018.jttpsoft.soundbomb.Services;
 import android.app.Service;
 import android.os.Binder;
 
-import nwh2018.jttpsoft.soundbomb.MeshConnector;
+import nwh2018.jttpsoft.soundbomb.Services.MeshConnector;
 
 /**
  * Created by tjm on 1/13/18.

@@ -4,19 +4,15 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CompoundButton;
-import android.widget.Switch;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import nwh2018.jttpsoft.soundbomb.MeshConnector;
 import nwh2018.jttpsoft.soundbomb.R;
 
 public class SourceActivity extends AppCompatActivity implements Button.OnClickListener{
@@ -30,7 +26,7 @@ public class SourceActivity extends AppCompatActivity implements Button.OnClickL
 
     //--UI ELEMENTS--
     TextView tv_currentSong;
-    Button btn_play;
+    ImageButton btn_play;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +39,7 @@ public class SourceActivity extends AppCompatActivity implements Button.OnClickL
         //--REGISTER UI ELEMENTS--
         tv_currentSong = (TextView)findViewById(R.id.tv_currentSong);
 
-        btn_play = (Button)findViewById(R.id.btn_play);
+        btn_play = (ImageButton)findViewById(R.id.btn_play);
         btn_play.setOnClickListener(this);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -135,7 +131,7 @@ public class SourceActivity extends AppCompatActivity implements Button.OnClickL
     public void onClick(View view) {
         switch(view.getId()){
             case R.id.btn_play:
-                btn_play.setText(btn_play.getText() != "Play" ? "Play" : "Pause");
+                btn_play.setImageResource(R.drawable.pause_button);
                 break;
             default:
                 break;

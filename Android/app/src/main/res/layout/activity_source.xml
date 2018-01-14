@@ -37,13 +37,13 @@
         android:gravity="center_horizontal"
         android:text="Current Song: None" />
 
-    <Button
+    <ImageButton
         android:id="@+id/btn_play"
         android:layout_gravity="center_horizontal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="0.5"
-        android:text="Off" />
+        android:src="@drawable/play_button"/>
 
     <!--
     <android.support.design.widget.FloatingActionButton
