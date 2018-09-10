@@ -1,2 +1,2 @@
 # JTTPSoft
-nwHacks 2018 babyyyyyyy
+nwHacks 2018 repository.
